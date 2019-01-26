@@ -2496,7 +2496,9 @@ static void video_texture_unload_gl(
       uintptr_t *id)
 {
    GLuint glid = (GLuint) *id;
+   RARCH_ERR("[GL]: video_texture_unload_gl %u : before calling glDeleteTextures\n", glid);
    glDeleteTextures(1, &glid);
+   RARCH_ERR("[GL]: video_texture_unload_gl %u : after calling glDeleteTextures\n",glid);
 }
 
 #ifdef HAVE_THREADS
@@ -2526,7 +2528,9 @@ static int video_texture_unload_wrap_gl(void *data)
 {
    if (!data)
       return 0;
+   RARCH_ERR("[GL]: video_texture_unload_wrap_gl: start\n");
    video_texture_unload_gl((uintptr_t*)data);
+   RARCH_ERR("[GL]: video_texture_unload_wrap_gl: end\n");
    return 0;
 }
 #endif
@@ -2562,17 +2566,22 @@ static void gl_unload_texture(void *video_data, uintptr_t data, bool threaded)
 {
    if (!data)
       return;
+   RARCH_ERR("[GL]: gl_unload_texture %u : start\n", data);
    uintptr_t glid = data;
 #ifdef HAVE_THREADS
    if (threaded && video_data)
    {
+	  RARCH_ERR("[GL]: gl_unload_texture : calling thread function\n");
       custom_command_method_t func = video_texture_unload_wrap_gl;
       video_thread_texture_load((void *)&glid, func);
+	  RARCH_ERR("[GL]: gl_unload_texture : after calling thread function\n");
+	  RARCH_ERR("[GL]: gl_unload_texture %u : stop\n", data);
       return;
    }
 #endif
 
    video_texture_unload_gl(&glid);
+   RARCH_ERR("[GL]: gl_unload_texture %u : stop\n", data);
 }
 
 static void gl_set_coords(void *handle_data, void *shader_data,

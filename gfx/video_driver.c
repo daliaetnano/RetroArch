@@ -2728,8 +2728,9 @@ bool video_driver_texture_unload(uintptr_t *id)
 {
    if (!*id || !video_driver_poke || !video_driver_poke->unload_texture)
       return false;
-
+   RARCH_ERR("[GL]: video_driver_texture_unload : calling driver unload texture %u\n", *id);
    video_driver_poke->unload_texture(video_driver_data, *id, video_driver_is_threaded_internal());
+   RARCH_ERR("[GL]: video_driver_texture_unload : after driver unload texture %u\n", *id);
    *id = 0;
    return true;
 }

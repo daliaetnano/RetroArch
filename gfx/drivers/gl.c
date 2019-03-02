@@ -2495,7 +2495,8 @@ static void video_texture_load_gl(
 static void video_texture_unload_gl(
       uintptr_t *id)
 {
-   glDeleteTextures(1, (GLuint*)id);
+   GLuint glid = (GLuint) *id;
+   glDeleteTextures(1, &glid);
 }
 
 #ifdef HAVE_THREADS
@@ -2561,18 +2562,17 @@ static void gl_unload_texture(void *video_data, uintptr_t data, bool threaded)
 {
    if (!data)
       return;
-   GLuint glid = (GLuint)data;
-
+   uintptr_t glid = data;
 #ifdef HAVE_THREADS
-   if (threaded)
+   if (threaded && video_data)
    {
       custom_command_method_t func = video_texture_unload_wrap_gl;
-      video_thread_texture_load((void *)&data, func);
+      video_thread_texture_load((void *)&glid, func);
       return;
    }
 #endif
 
-   video_texture_unload_gl(&data);
+   video_texture_unload_gl(&glid);
 }
 
 static void gl_set_coords(void *handle_data, void *shader_data,

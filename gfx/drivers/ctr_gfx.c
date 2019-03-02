@@ -1187,7 +1187,7 @@ static uintptr_t ctr_load_texture(void *video_data, void *data,
    return (uintptr_t)texture;
 }
 
-static void ctr_unload_texture(void *data, uintptr_t handle)
+static void ctr_unload_texture(void *data, uintptr_t handle, bool threaded)
 {
    struct ctr_texture *texture   = (struct ctr_texture*)handle;
 

@@ -726,7 +726,7 @@ static uintptr_t vita_load_texture(void *video_data, void *data,
    return (uintptr_t)texture;
 }
 
-static void vita_unload_texture(void *data, uintptr_t handle)
+static void vita_unload_texture(void *data, uintptr_t handle, bool threaded)
 {
    struct vita2d_texture *texture = (struct vita2d_texture*)handle;
    if (!texture)

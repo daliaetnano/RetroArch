@@ -1303,7 +1303,7 @@ static void gl1_set_aspect_ratio(void *data, unsigned aspect_ratio_idx)
    gl1->should_resize = true;
 }
 
-static void gl1_unload_texture(void *data, uintptr_t id)
+static void gl1_unload_texture(void *data, uintptr_t id, bool threaded)
 {
    GLuint glid;
    if (!id)

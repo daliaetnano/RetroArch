@@ -1199,15 +1199,20 @@ static uintptr_t thread_load_texture(void *video_data, void *data,
    return thr->poke->load_texture(thr->driver_data, data, threaded, filter_type);
 }
 
-static void thread_unload_texture(void *video_data, uintptr_t id)
+static void thread_unload_texture(void *video_data, uintptr_t id, bool threaded)
 {
+   RARCH_ERR("[GL1]: thread_unload_texture %u\n", id);
    thread_video_t *thr = (thread_video_t*)video_data;
-
+   RARCH_ERR("[GL2]: thread_unload_texture %u\n", id);
    if (!thr)
       return;
 
-   if (thr->poke && thr->poke->unload_texture)
-      thr->poke->unload_texture(thr->driver_data, id);
+   RARCH_ERR("[GL3]: thread_unload_texture %u\n", id);
+   if (thr->poke && thr->poke->unload_texture) {
+	  RARCH_ERR("[GL4]: thread_unload_texture %u\n", id);
+      thr->poke->unload_texture(thr->driver_data, id, threaded);
+   }
+   RARCH_ERR("[GL5]: thread_unload_texture %u\n", id);
 }
 
 static void thread_apply_state_changes(void *data)
@@ -1449,6 +1454,7 @@ bool video_thread_font_init(const void **font_driver, void **font_handle,
 unsigned video_thread_texture_load(void *data,
       custom_command_method_t func)
 {
+
    thread_video_t *thr  = (thread_video_t*)video_driver_get_ptr(true);
    thread_packet_t pkt  = { CMD_CUSTOM_COMMAND };
 
@@ -1458,7 +1464,8 @@ unsigned video_thread_texture_load(void *data,
    pkt.data.custom_command.method = func;
    pkt.data.custom_command.data   = (void*)data;
 
+   RARCH_ERR("[GL]: video_thread_texture_load: start\n");
    video_thread_send_and_wait(thr, &pkt);
-
+   RARCH_ERR("[GL]: video_thread_texture_load: end\n");
    return pkt.data.custom_command.return_value;
 }

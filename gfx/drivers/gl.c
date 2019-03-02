@@ -4449,6 +4449,15 @@ static void video_texture_load_gl2(
          );
 }
 
+static void video_texture_unload_gl2(
+      uintptr_t *id)
+{
+   GLuint glid = (GLuint) *id;
+   RARCH_ERR("[GL]: video_texture_unload_gl %u : before calling glDeleteTextures\n", glid);
+   glDeleteTextures(1, &glid);
+   RARCH_ERR("[GL]: video_texture_unload_gl %u : after calling glDeleteTextures\n",glid);
+}
+
 #ifdef HAVE_THREADS
 static int video_texture_load_wrap_gl2_mipmap(void *data)
 {
@@ -4470,6 +4479,16 @@ static int video_texture_load_wrap_gl2(void *data)
    video_texture_load_gl2((struct texture_image*)data,
          TEXTURE_FILTER_LINEAR, &id);
    return (int)id;
+}
+
+static int video_texture_unload_wrap_gl2(void *data)
+{
+   if (!data)
+      return 0;
+   RARCH_ERR("[GL]: video_texture_unload_wrap_gl: start\n");
+   video_texture_unload_gl2((uintptr_t*)data);
+   RARCH_ERR("[GL]: video_texture_unload_wrap_gl: end\n");
+   return 0;
 }
 #endif
 
@@ -4500,14 +4519,26 @@ static uintptr_t gl2_load_texture(void *video_data, void *data,
    return id;
 }
 
-static void gl2_unload_texture(void *data, uintptr_t id)
+static void gl2_unload_texture(void *video_data, uintptr_t data, bool threaded)
 {
-   GLuint glid;
-   if (!id)
+   if (!data)
       return;
+   RARCH_ERR("[GL]: gl_unload_texture %u : start\n", data);
+   uintptr_t glid = data;
+#ifdef HAVE_THREADS
+   if (threaded)
+   {
+	  RARCH_ERR("[GL]: gl_unload_texture : calling thread function\n");
+      custom_command_method_t func = video_texture_unload_wrap_gl2;
+      video_thread_texture_load((void *)&glid, func);
+	  RARCH_ERR("[GL]: gl_unload_texture : after calling thread function\n");
+	  RARCH_ERR("[GL]: gl_unload_texture %u : stop\n", data);
+      return;
+   }
+#endif
 
-   glid = (GLuint)id;
-   glDeleteTextures(1, &glid);
+   video_texture_unload_gl2(&glid);
+   RARCH_ERR("[GL]: gl_unload_texture %u : stop\n", data);
 }
 
 static float gl2_get_refresh_rate(void *data)

@@ -9008,7 +9008,7 @@ static bool setting_append_list(
 #if defined(HAVE_THREADS)
             CONFIG_BOOL(
                   list, list_info,
-                  video_driver_get_threaded(),
+                  &settings->bools.video_threaded,
                   MENU_ENUM_LABEL_VIDEO_THREADED,
                   MENU_ENUM_LABEL_VALUE_VIDEO_THREADED,
                   DEFAULT_VIDEO_THREADED,

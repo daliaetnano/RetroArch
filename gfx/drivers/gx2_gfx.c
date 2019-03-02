@@ -1621,7 +1621,7 @@ static uintptr_t wiiu_gfx_load_texture(void *video_data, void *data,
 
    return (uintptr_t)texture;
 }
-static void wiiu_gfx_unload_texture(void *data, uintptr_t handle)
+static void wiiu_gfx_unload_texture(void *data, uintptr_t handle, bool threaded)
 {
    GX2Texture *texture = (GX2Texture *)handle;
 
